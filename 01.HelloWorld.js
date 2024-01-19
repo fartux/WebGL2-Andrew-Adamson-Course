@@ -11,6 +11,7 @@ void main()
 const fragmentShaderSource = `#version 300 es
 #pragma vscode_glsllint_stage: frag
 
+// float precision im fragment shader definieren (Bei anderen Datentypen optional)
 precision mediump float;
 
 out vec4 fragColor;
