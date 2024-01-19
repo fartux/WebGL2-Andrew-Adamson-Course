@@ -3,6 +3,7 @@ const vertexShaderSource = `#version 300 es
 
 void main()
 {
+
     gl_PointSize = 100.0;
     gl_Position = vec4(0.0, 0.0, 0.0, 1.0);
 }`;
@@ -19,10 +20,14 @@ void main()
     fragColor = vec4(1.0, 0.0, 0.0, 1.0);
 }`;
 
+// Canvas definieren
 const canvas = document.querySelector('canvas');
 const gl = canvas.getContext('webgl2');
+
+// Programm erstellen
 const program = gl.createProgram();
 
+// Shader: Create -> Set GLSL Source -> Compile -> Attach
 const vertexShader = gl.createShader(gl.VERTEX_SHADER);
 gl.shaderSource(vertexShader, vertexShaderSource);
 gl.compileShader(vertexShader);
@@ -33,6 +38,7 @@ gl.shaderSource(fragmentShader, fragmentShaderSource);
 gl.compileShader(fragmentShader);
 gl.attachShader(program, fragmentShader);
 
+// Programm linken
 gl.linkProgram(program);
 
 if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
@@ -40,6 +46,7 @@ if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
     console.log(gl.getShaderInfoLog(fragmentShader));
 }
 
+// Programm benutzen
 gl.useProgram(program);
 
 gl.drawArrays(gl.POINTS, 0, 1);
