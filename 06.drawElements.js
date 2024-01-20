@@ -52,7 +52,7 @@ const program = gl.createProgram();
 }
 gl.useProgram(program);
 
-
+// Ecken und Farben wiederholen sich
 const arrayVertexData = new Float32Array([
 	0,0,				1,0,0,
 	0.00000,1.00000,	1,0,0,
@@ -74,19 +74,20 @@ const arrayVertexData = new Float32Array([
 	-.95106,0.30902,	1,0,1,
 	0.00000,1.00000,	1,0,1,
 ]);
-
+// Jede Ecke und Farbe wird nur einmal gespeichert
+// Nachteil: Zu jeder Ecke wird nur eine Farbe gespeichert
 const elementVertexData = new Float32Array([
-	0,0,				0,0,0,
+	0,0,				1,1,1,
 	0.00000,1.00000,	1,0,0,
 	0.95106,0.30902,	0,1,0,
 	0.58779,-.80902,	0,0,1,
 	-.58779,-.80902,	1,1,0,
 	-.95106,0.30902,	1,0,1,
 ]);
-
+// Liste der Dreicke (Index der Ecken)
 const elementIndexData = new Uint8Array([
-	0,1,2,
-	0,2,3,
+	0,1,2, // also 0,0 | 0.00000,1.00000 | 0.95106,0.30902,
+	0,2,3, // also 0,0 | 0.95106,0.30902 | 0.58779,-.80902,
 	0,3,4,
 	0,4,5,
 	0,5,1,
@@ -96,10 +97,12 @@ const arrayVertexBuffer = gl.createBuffer();
 gl.bindBuffer(gl.ARRAY_BUFFER, arrayVertexBuffer);
 gl.bufferData(gl.ARRAY_BUFFER, arrayVertexData, gl.STATIC_DRAW);
 
+// ARRAY_BUFFER -> Vertex Data
 const elementVertexBuffer = gl.createBuffer();
 gl.bindBuffer(gl.ARRAY_BUFFER, elementVertexBuffer);
 gl.bufferData(gl.ARRAY_BUFFER, elementVertexData, gl.STATIC_DRAW);
 
+// ELEMENT_ARRAY_BUFFER -> Indizes
 const elementIndexBuffer = gl.createBuffer();
 gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, elementIndexBuffer);
 gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, elementIndexData, gl.STATIC_DRAW);

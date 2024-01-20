@@ -60,9 +60,9 @@ gl.useProgram(program);
 
 // BufferData speichert alle Daten
 const bufferData = new Float32Array([
-     0, 1,          100,        1,0,0,
-    -1,-1,           32,        0,1,0,
-     1,-1,           50,        0,0,1,
+     0, 1,          100,        0,0,0,
+    -1,-1,           32,        1,1,0,
+     1,-1,           50,        1,1,1,
 ]);
 
 // Reihenfolge festlegen
@@ -82,7 +82,8 @@ gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
 gl.bufferData(gl.ARRAY_BUFFER, bufferData, gl.STATIC_DRAW);
 
 // Attribut Pointer festlegen
-// Attribut, #Werte, Datentyp, false, Stride, Anfang
+// Attribut, #Werte, Datentyp, normalized, Stride, Anfang
+// normalized: 8bit ints -256..256 Werte werden auf -1..1 normalisiert
 gl.vertexAttribPointer(aPositionLoc, 2, gl.FLOAT, false, 6 * 4, 0);
 gl.vertexAttribPointer(aPointSizeLoc, 1, gl.FLOAT, false, 6 * 4, 2 * 4);
 gl.vertexAttribPointer(aColorLoc, 3, gl.FLOAT, false, 6 * 4, 3 * 4);

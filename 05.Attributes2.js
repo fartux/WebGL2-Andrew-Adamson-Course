@@ -52,6 +52,7 @@ const program = gl.createProgram();
 }
 gl.useProgram(program);
 
+// 32Bit -> 4 Byte
 const vertData = new Float32Array([
 	-0.6618,-0.7687, 	50, 	0.5849, 0.7600, 0.4662,
 	-0.3149, 0.7417, 	10, 	0.9232, 0.9332, 0.4260,
@@ -64,7 +65,7 @@ const vertData = new Float32Array([
 	 0.8625,-0.0835, 	20, 	0.3708, 0.6588, 0.8611,
 	 0.7997, 0.4695, 	70, 	0.7490, 0.3797, 0.6879,
 ]);
-
+// 16Bit -> 2 Byte
 const vertData2 = new Int16Array([
 	-21686,-25189,		50,		 19166, 24903, 15276,
 	-10319, 24304,		10,		 30251, 30579, 13959,
@@ -77,7 +78,7 @@ const vertData2 = new Int16Array([
 	 28262, -2737,		20,		 12150, 21587, 28216,
 	 26204, 15384,		70,		 24543, 12442, 22541,
 ]);
-
+// 8Bit -> 1 Byte
 const vertData3 = new Int8Array([
 	 -85, -99,   		50,		  74,  97,  59,
 	 -41,  94,   		10,		 118, 119,  54,
@@ -90,11 +91,18 @@ const vertData3 = new Int8Array([
 	 110, -11,   		20,		  47,  84, 110,
 	 102,  60,   		70,		  95,  48,  88,
 ]);
+console.log(
+	vertData.map(v => Math.floor(v * (1<<15)))
+	.reduce((c,v) => [...c, v.toString(10).padStart(6)], [])
+	.join()
+);
 
+// Reihenfolge der Daten bestimmen
 const aPositionLoc = 0;
 const aPointSizeLoc = 1;
 const aColorLoc = 2;
 
+// 
 gl.vertexAttrib4f(aPositionLoc, 0, 0, 0, 1);
 gl.vertexAttrib1f(aPointSizeLoc, 50);
 gl.vertexAttrib4f(aColorLoc, 1, 0, 0, 1);
@@ -103,10 +111,30 @@ const vertBuffer = gl.createBuffer();
 gl.bindBuffer(gl.ARRAY_BUFFER, vertBuffer);
 gl.bufferData(gl.ARRAY_BUFFER, vertData, gl.STATIC_DRAW);
 
+// Attribut Pointer setzen: Wo finde ich was im Buffer
+// Werte sind schon normalisiert
 gl.vertexAttribPointer(aPositionLoc, 2, gl.FLOAT, false, 24, 0);
 gl.vertexAttribPointer(aPointSizeLoc, 1, gl.FLOAT, false, 24, 8);
 gl.vertexAttribPointer(aColorLoc, 3, gl.FLOAT, false, 24, 12);
 
+// // 2. Datensatz
+// gl.bindBuffer(gl.ARRAY_BUFFER, vertBuffer);
+// gl.bufferData(gl.ARRAY_BUFFER, vertData2, gl.STATIC_DRAW);
+
+// gl.vertexAttribPointer(aPositionLoc, 2, gl.SHORT, true, 12, 0);
+// gl.vertexAttribPointer(aPointSizeLoc, 1, gl.SHORT, false, 12, 4);
+// gl.vertexAttribPointer(aColorLoc, 3, gl.SHORT, true, 12, 6);
+
+// // 2. Datensatz
+// gl.bindBuffer(gl.ARRAY_BUFFER, vertBuffer);
+// gl.bufferData(gl.ARRAY_BUFFER, vertData3, gl.STATIC_DRAW);
+
+// gl.vertexAttribPointer(aPositionLoc, 2, gl.BYTE, true, 6, 0);
+// gl.vertexAttribPointer(aPointSizeLoc, 1, gl.BYTE, false, 6, 2);
+// gl.vertexAttribPointer(aColorLoc, 3, gl.BYTE, true, 6, 3);
+
+
+// Attribute enablen
 gl.enableVertexAttribArray(aPositionLoc);
 gl.enableVertexAttribArray(aColorLoc);
 gl.enableVertexAttribArray(aPointSizeLoc);

@@ -16,6 +16,7 @@ const fragmentShaderSrc = `#version 300 es
 
 precision mediump float;
 
+// vTexCoord für Textur
 in vec2 vTexCoord;
 
 uniform sampler2D uSampler;
@@ -24,6 +25,8 @@ out vec4 fragColor;
 
 void main()
 {
+	// sampler = Art der Weise, auf Bild zugegriffen
+	// TexCoord = [u,v] Koordinate des Bildes
     fragColor = texture(uSampler, vTexCoord);
 }`;
 
@@ -50,20 +53,49 @@ const program = gl.createProgram();
 }
 gl.useProgram(program);
 
+// Definiere Fläche der anzuzeigenden Textur
 const vertexBufferData = new Float32Array([
-	-.9,.9,
-	-.9,-.9,
-	.9,.9,
-	.9,-.9,
-]);
-
-const texCoordBufferData = new Float32Array([
+	
+	-1, -1,
 	0,1,
-	0,0,
-	1,1,
-	1,0,
+	1,-1,
+	
+	// -1,1,
+	// -1,-1,
+	// 1,1,
+	// 1,-1,
+
+	// schräg
+	// -0.8,1,
+	// -1,-0.8,
+	// 1,0.8,
+	// 0.8,-1,
 ]);
 
+// Definiere angezeigten Abschnitt der Textur
+// Wenn das ganze Bild von 0 bis 1 geht ([u,v] Koordinaten)
+// [0,0] unten-links, [0.5,0.5] Mitte, [1,1] oben-rechts
+const texCoordBufferData = new Float32Array([
+	0,0,
+	0.5,1,
+	1,0
+	
+	
+
+	// 0,1, // links oben
+	// 0,0, // links unten
+	// 1,1, // rechts oben
+	// 1,0 // rechts unten
+	
+	// schneide 10% von unten links und oben rechts ab.
+	// 0.1,0.9,
+	// 0.1,0.1,
+	// 0.9,0.9,
+	// 0.9,0.1,
+]);
+
+// Unsere Textur
+//Wir definieren ein Bild über 4*4=16 Pixel
 const pixels = new Uint8Array([
 	255,255,255,		230,25,75,			60,180,75,			255,225,25,
 	67,99,216,			245,130,49,			145,30,180,			70,240,240,
@@ -90,22 +122,24 @@ gl.enableVertexAttribArray(1);
 const loadImage = () => new Promise(resolve => {
 	const image = new Image();
 	image.addEventListener('load', () => resolve(image));
-	image.src = './image.png';
+	image.src = 'assets/kitten.png';
 });
 
 const run = async () => {
 	const image = await loadImage();
-
+	// JPG, PNG erster Pixel oben
+	// WebGL erster Pixel ist unten
 	// gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
-
 	const textureSlot = 1;
 	gl.activeTexture(gl.TEXTURE0 + textureSlot);
 	gl.uniform1i(gl.getUniformLocation(program, 'uSampler'), textureSlot);
 
+	// Texture Objekt
+	
 	const texture = gl.createTexture();
 	gl.bindTexture(gl.TEXTURE_2D, texture);
-	// gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, 500,300, 0, gl.RGB, gl.UNSIGNED_BYTE, image);
-	// gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, 4,4, 0, gl.RGB, gl.UNSIGNED_BYTE, pixels);
+	gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, 500,300, 0, gl.RGB, gl.UNSIGNED_BYTE, image);
+	gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, 4,4, 0, gl.RGB, gl.UNSIGNED_BYTE, pixels);
 	gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, 4,4, 0, gl.RGB, gl.UNSIGNED_BYTE, 0);
 
 	gl.generateMipmap(gl.TEXTURE_2D);
@@ -114,7 +148,8 @@ const run = async () => {
 	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.MIRRORED_REPEAT);
 	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.MIRRORED_REPEAT);
 
-	gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+	gl.drawArrays(gl.TRIANGLES, 0, 3);
+	// gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 };
 
 run();

@@ -88,6 +88,7 @@ gl.enableVertexAttribArray(1);
 // done any time after the WebGL program creation and before the draw call.
 gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
 
+// Texturen 
 const pixelTextureUnit = 0;
 const kittenTextureUnit = 5;
 
@@ -97,7 +98,7 @@ gl.uniform1i(gl.getUniformLocation(program, 'uKittenSampler'), kittenTextureUnit
 const loadImage = () => new Promise(resolve => {
 	const image = new Image();
 	image.addEventListener('load', () => resolve(image));
-	image.src = './image.png';
+	image.src = 'assets/kitten.png';
 });
 
 const run = async () => {
