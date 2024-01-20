@@ -4,13 +4,15 @@ const vertexShaderSrc = `#version 300 es
 
 // Uniforms werden in Shadern definiert
 uniform float uPointSize;
-uniform vec2 uPosition;
+// vec2 Array mit 5 Punkten definiert
+uniform vec2 uPosition[5];
 
 void main()
 {
     gl_PointSize = uPointSize;
     // uPosition is vec2 deshalb muss man letzte zwei Werte selbst setzen
-    gl_Position = vec4(uPosition, 0.0, 1.0);
+    // gl_Position = vec4(uPosition[0], 0.0, 1.0);
+    gl_Position = vec4(uPosition[gl_VertexID], 0.0, 1.0);
 }`;
 
 const fragmentShaderSrc = `#version 300 es
@@ -58,13 +60,19 @@ gl.useProgram(program);
 // Uniforms Typ abhängig von der Definition im Shader
 // Unforms sind Pointer auf Daten
 const uPositionLoc = gl.getUniformLocation(program, 'uPosition');
-// vec2
-gl.uniform2f(uPositionLoc, 0, -.2);
+// vec2 Array mit 5 Punkten
+gl.uniform2fv(uPositionLoc, [
+    0, 0,
+    -0.5, 0,
+    0.5, 0,
+    0, -0.5,
+    0, 0.5,
+]);
 
 
 const uPointSizeLoc = gl.getUniformLocation(program, 'uPointSize');
 // float
-gl.uniform1f(uPointSizeLoc, 100);
+gl.uniform1f(uPointSizeLoc, 10);
 
 
 const uIndexLoc = gl.getUniformLocation(program, 'uIndex');
@@ -81,4 +89,6 @@ gl.uniform4fv(uColorsLoc, [
     0,0,1,1,
 ]);
 
-gl.drawArrays(gl.POINTS, 0, 1);
+// Zeichne Punkte, 5 Stück
+gl.drawArrays(gl.POINTS, 0, 5);
+

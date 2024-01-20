@@ -3,14 +3,18 @@
 const vertexShaderSrc = `#version 300 es
 #pragma vscode_glsllint_stage: vert
 
+// Positionen im Buffer
 layout(location = 1) in float aPointSize;
 layout(location = 0) in vec2 aPosition;
 layout(location = 2) in vec3 aColor;
 
+// vColor wird Fragment Shader übergeben
 out vec3 vColor;
 
+// Für jeden Vertex
 void main()
 {
+    // vColor wird für jeden Datensatz gesetz
     vColor = aColor;
     gl_PointSize = aPointSize;
     gl_Position = vec4(aPosition, 0.0, 1.0);
@@ -21,12 +25,14 @@ const fragmentShaderSrc = `#version 300 es
 
 precision mediump float;
 
+// vColor von VertexShader empfangen
 in vec3 vColor;
 
 out vec4 fragColor;
 
+// Für jeden Vertex:
 void main()
-{
+{ 
     fragColor = vec4(vColor, 1.0);
 }`;
 
@@ -52,26 +58,34 @@ if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
 }
 gl.useProgram(program);
 
+// BufferData speichert alle Daten
 const bufferData = new Float32Array([
      0, 1,          100,        1,0,0,
     -1,-1,           32,        0,1,0,
      1,-1,           50,        0,0,1,
 ]);
 
+// Reihenfolge festlegen
 const aPositionLoc = 0;
 const aPointSizeLoc = 1;
 const aColorLoc = 2;
 
+// Attributes enablen
 gl.enableVertexAttribArray(aPositionLoc);
 gl.enableVertexAttribArray(aPointSizeLoc);
 gl.enableVertexAttribArray(aColorLoc);
 
+// Buffer
+//Objekt erstellen -> Buffer binden -> Buffer festlegen
 const buffer = gl.createBuffer();
 gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
 gl.bufferData(gl.ARRAY_BUFFER, bufferData, gl.STATIC_DRAW);
 
+// Attribut Pointer festlegen
+// Attribut, #Werte, Datentyp, false, Stride, Anfang
 gl.vertexAttribPointer(aPositionLoc, 2, gl.FLOAT, false, 6 * 4, 0);
 gl.vertexAttribPointer(aPointSizeLoc, 1, gl.FLOAT, false, 6 * 4, 2 * 4);
 gl.vertexAttribPointer(aColorLoc, 3, gl.FLOAT, false, 6 * 4, 3 * 4);
 
+//Draw Call Modus
 gl.drawArrays(gl.TRIANGLES, 0, 3);
